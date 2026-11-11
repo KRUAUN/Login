@@ -675,9 +675,127 @@
         padding: 22px 16px;
       }
     }
+
+    /* Realtime Clock */
+    .realtime-clock {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: rgba(17, 24, 39, 0.72);
+      border: 1.5px solid rgba(148, 163, 184, 0.22);
+      padding: 10px 18px;
+      border-radius: var(--radius-md);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      font-size: 15px;
+      color: #bae6fd;
+      text-align: left;
+      line-height: 1.4;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(56, 189, 248, 0.1);
+      z-index: 10;
+    }
+    .clock-date {
+      font-weight: 600;
+      color: #ffffff;
+      white-space: nowrap;
+      font-size: 15px;
+    }
+    .clock-time {
+      font-weight: 800;
+      color: #38bdf8;
+      font-family: monospace;
+      font-size: 19px;
+      text-shadow: 0 0 12px rgba(56, 189, 248, 0.45);
+      margin-top: 2px;
+    }
+    @media (max-width: 1024px) {
+      .realtime-clock {
+        position: relative;
+        top: 0;
+        left: 0;
+        margin: 0 auto 16px auto;
+        display: inline-block;
+        text-align: center;
+      }
+    }
+
+    /* Floating Robot / AI Background Graphic */
+    .floating-robot-container {
+      position: fixed;
+      bottom: 40px;
+      right: 40px;
+      z-index: 1;
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      animation: floatRobot 6s ease-in-out infinite alternate;
+      opacity: 0.85;
+    }
+    .floating-robot {
+      filter: drop-shadow(0 0 15px rgba(56, 189, 248, 0.4));
+    }
+    .robot-speech {
+      background: rgba(56, 189, 248, 0.14);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      color: #bae6fd;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      padding: 4px 10px;
+      border-radius: 999px;
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.2);
+    }
+    @keyframes floatRobot {
+      0% { transform: translateY(0) rotate(-2deg); }
+      100% { transform: translateY(-20px) rotate(3deg); }
+    }
+    @keyframes rotateRing {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    @media (max-width: 1200px) {
+      .floating-robot-container {
+        position: relative;
+        bottom: 0;
+        right: 0;
+        margin: 32px auto 0 auto;
+        opacity: 0.95;
+        pointer-events: auto;
+      }
+    }
+
+    /* Footer Credits */
+    .app-footer {
+      text-align: center;
+      margin-top: 36px;
+      font-size: 13px;
+      color: var(--muted);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      position: relative;
+      z-index: 1;
+    }
+    .credit-text {
+      font-size: 12px;
+      opacity: 0.8;
+    }
+    .glowing-text {
+      color: #38bdf8;
+      text-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
+      font-weight: 500;
+    }
   </style>
 <style data-link-removed-style>a[data-link-removed],a[href*="zPythonSafez"]:not([onclick]){pointer-events:none!important;cursor:default!important;opacity:.6}</style></head>
 <body>
+
+  <!-- Real-time Clock (วันที่และเวลา) -->
+  <div class="realtime-clock" aria-label="วันที่และเวลาปัจจุบัน">
+    <div class="clock-date" id="clock-date">กำลังโหลดวันที่...</div>
+    <div class="clock-time" id="clock-time">00:00:00 น.</div>
+  </div>
 
   <!-- Animated Star & Particle Canvas -->
   <canvas id="bg-canvas" aria-hidden="true"></canvas>
@@ -804,7 +922,7 @@
       </form>
 
       <!-- ตั้งค่าการเชื่อมต่อ Google Sheet -->
-      <div class="sheet-config">
+      <div class="sheet-config" style="display: none !important;">
         <button type="button" class="sheet-toggle-btn" id="sheet-toggle-btn" aria-expanded="false">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
           <span>จัดการรายชื่อนักเรียน & ตั้งค่าระบบบันทึก Google Sheet (สำหรับคุณครู)</span>
@@ -896,6 +1014,55 @@
         </div>
       </div>
     </section>
+
+    <!-- ส่วนเครดิตผู้จัดทำด้านล่างสุด -->
+    <footer class="app-footer">
+      <p>ระบบลงชื่อเข้าใช้งานห้องปฏิบัติการคอมพิวเตอร์ — โรงเรียนบ้านหนองไผ่ใหญ่</p>
+      <p class="credit-text">พัฒนาโดย <span class="glowing-text">คุณครูเอกสกุล โลไธสง ตำแหน่ง ครู คศ.1</span> © 2025</p>
+    </footer>
+
+    <!-- Floating Robot / AI companion -->
+    <div class="floating-robot-container" aria-hidden="true">
+      <svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" class="floating-robot">
+        <!-- Radial Gradient for Head Glow -->
+        <defs>
+          <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.35"/>
+            <stop offset="100%" stop-color="#38bdf8" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+        <circle cx="100" cy="100" r="85" fill="url(#glow)"/>
+        
+        <!-- Antennas -->
+        <rect x="96" y="25" width="8" height="22" rx="4" fill="#38bdf8" />
+        <circle cx="100" cy="20" r="8" fill="#818cf8" />
+        
+        <!-- Robot Head Body -->
+        <rect x="50" y="45" width="100" height="90" rx="28" fill="#111827" stroke="#38bdf8" stroke-width="4.5" />
+        
+        <!-- Ears / Audio Sensors -->
+        <rect x="34" y="75" width="16" height="30" rx="8" fill="#818cf8" stroke="#38bdf8" stroke-width="1.5" />
+        <rect x="150" y="75" width="16" height="30" rx="8" fill="#818cf8" stroke="#38bdf8" stroke-width="1.5" />
+        
+        <!-- Visor Screen -->
+        <rect x="62" y="64" width="76" height="42" rx="16" fill="#030712" stroke="#818cf8" stroke-width="2.5" />
+        
+        <!-- Glowing Eyes (AI) -->
+        <circle cx="82" cy="85" r="7" fill="#38bdf8">
+          <animate attributeName="opacity" values="0.4;1;0.4" dur="2.5s" repeatCount="indefinite" />
+        </circle>
+        <circle cx="118" cy="85" r="7" fill="#38bdf8">
+          <animate attributeName="opacity" values="0.4;1;0.4" dur="2.5s" repeatCount="indefinite" />
+        </circle>
+        
+        <!-- LED Smile -->
+        <path d="M 85 110 Q 100 120 115 110" stroke="#34d399" stroke-width="3" stroke-linecap="round" fill="none" />
+        
+        <!-- Floating Sparkles / Tech Rings -->
+        <circle cx="100" cy="100" r="94" stroke="#38bdf8" stroke-width="1.5" stroke-dasharray="6 14" style="transform-origin: center; animation: rotateRing 15s linear infinite;" />
+      </svg>
+      <div class="robot-speech">SMART AI BOT</div>
+    </div>
   </main>
 
   <!-- Modal แจ้งเตือนเมื่อลงทะเบียนสำเร็จ พร้อมปุ่มเข้าสู่ Google.com -->
@@ -954,27 +1121,46 @@
     // รายชื่อนักเรียนตัวอย่าง (เริ่มต้น)
     const DEFAULT_STUDENTS_BY_GRADE = {
       "ป.1": [
-        "เลขที่ 1 ด.ช. กิตติพงษ์ ใจดี (ตัวอย่าง)",
-        "เลขที่ 2 ด.ช. ณัฐภัทร มีสุข (ตัวอย่าง)",
-        "เลขที่ 3 ด.ญ. กมลชนก รักเรียน (ตัวอย่าง)",
-        "เลขที่ 4 ด.ญ. พิมพ์ชนก สดใส (ตัวอย่าง)",
-        "เลขที่ 5 ด.ช. ธนกร เจริญผล (ตัวอย่าง)"
+        "เลขที่ 1 เด็กชายกันต์ณภัทร รอดศัตรู",
+        "เลขที่ 2 เด็กชายชลธี ถาวรเมืองแมน",
+        "เลขที่ 3 เด็กชายทินกฤต คะตะอินทร์",
+        "เลขที่ 4 เด็กชายธนาธรณ์ รอดศัตรู",
+        "เลขที่ 5 เด็กชายปรเมศวร์ เนียนไธสง",
+        "เลขที่ 6 เด็กชายกฤติเดช ล่ามกระโทก",
+        "เลขที่ 7 เด็กชายกิตติศักดิ์ ศรีศรุตพงศ์",
+        "เลขที่ 8 เด็กหญิงรัญชิดา หาวกระโทก",
+        "เลขที่ 9 เด็กหญิงวรรณภา วิทไธสง",
+        "เลขที่ 10 เด็กหญิงพิชญา สวัสดิ์พูน"
       ],
       "ป.2": [
-        "เลขที่ 1 ด.ช. ธีรภัทร แสนดี (ตัวอย่าง)",
-        "เลขที่ 2 ด.ช. ภูริณัฐ ทองคำ (ตัวอย่าง)",
-        "เลขที่ 3 ด.ญ. ชนากานต์ มั่นคง (ตัวอย่าง)",
-        "เลขที่ 4 ด.ญ. นภัสสร ยิ้มแย้ม (ตัวอย่าง)",
-        "เลขที่ 5 ด.ช. ศุภกร รุ่งเรือง (ตัวอย่าง)"
+        "เลขที่ 1 เด็กชายสิทธิพงษ์ แก้วม่วงพะเนาว์",
+        "เลขที่ 2 เด็กชายธีภพ หูประโคน",
+        "เลขที่ 3 เด็กชายธนภัทร อ่องกลาง",
+        "เลขที่ 4 เด็กหญิงวลัยพร บุตรทอง",
+        "เลขที่ 5 เด็กหญิงอุ่นจัน พิมมะจัก",
+        "เลขที่ 6 เด็กหญิงธีริศรา เสือโคร่ง",
+        "เลขที่ 7 เด็กหญิงจันทมณี ว่องไว",
+        "เลขที่ 8 เด็กหญิงพัชรมัย โนนทอง"
       ],
       "ป.3": [
-        "เลขที่ 1 ด.ช. ปัณณวิชญ์ ศรีสวัสดิ์ (ตัวอย่าง)",
-        "เลขที่ 2 ด.ช. วรเมธ สุขเกษม (ตัวอย่าง)",
-        "เลขที่ 3 ด.ญ. ปภาวรินท์ ใจงาม (ตัวอย่าง)",
-        "เลขที่ 4 ด.ญ. สุพิชชา พัฒนา (ตัวอย่าง)",
-        "เลขที่ 5 ด.ช. อชิรวิชญ์ วงศ์ทอง (ตัวอย่าง)"
+        "เลขที่ 1 เด็กชายจุ้ย วิไสสิด",
+        "เลขที่ 2 เด็กชายชนาภัทร พบขุนทด",
+        "เลขที่ 3 เด็กชายฐิติวัฒน์ ปัตตายะโส",
+        "เลขที่ 4 เด็กชายพลกฤต ซึมกระโทก",
+        "เลขที่ 5 เด็กหญิงกมลรัตน์ หมั่นทองหลาง",
+        "เลขที่ 6 เด็กหญิงพศิกา เชื้อนาค",
+        "เลขที่ 7 เด็กหญิงปวันรัตน์ เนียนไธสง"
       ],
       "ป.4": [
+        "เลขที่ 1 เด็กชายณัฐพล พรมสุวรรณ",
+        "เลขที่ 2 เด็กชายวรากร รอดศัตรู",
+        "เลขที่ 3 เด็กหญิงคำแก้ว นวงสา",
+        "เลขที่ 4 เด็กหญิงธัญญณัฐ พันธุ์สมบัติ",
+        "เลขที่ 5 เด็กหญิงสุชาวดี ไวไธสง",
+        "เลขที่ 6 เด็กหญิงวิรดา ชาตัน",
+        "เลขที่ 7 เด็กหญิงธัญญรัตน์ พิมพา"
+      ],
+      "ป.5_OLD": [
         "เลขที่ 1 ด.ช. กฤตภาส บุญมี (ตัวอย่าง)",
         "เลขที่ 2 ด.ช. ชยพล เพชรดี (ตัวอย่าง)",
         "เลขที่ 3 ด.ญ. ณัฐณิชา สายชล (ตัวอย่าง)",
@@ -982,18 +1168,41 @@
         "เลขที่ 5 ด.ช. ภัทรพล สมบูรณ์ (ตัวอย่าง)"
       ],
       "ป.5": [
-        "เลขที่ 1 ด.ช. เจษฎาภรณ์ มีชัย (ตัวอย่าง)",
-        "เลขที่ 2 ด.ช. พงศกร ศรีสุวรรณ (ตัวอย่าง)",
-        "เลขที่ 3 ด.ญ. กัญญาพัชร ทองแท้ (ตัวอย่าง)",
-        "เลขที่ 4 ด.ญ. วริศรา รัตนโชติ (ตัวอย่าง)",
-        "เลขที่ 5 ด.ช. สิรวิชญ์ ภูมิใจ (ตัวอย่าง)"
+        "เลขที่ 1 เด็กชายนิพน ใบสีทอง",
+        "เลขที่ 2 เด็กชายกิตติวัช มุ่งครองกลาง",
+        "เลขที่ 3 เด็กชายจิตติพัฒน์ อุสาหะกาญจน์",
+        "เลขที่ 4 เด็กชายชัยชนะ อาญาเมือง",
+        "เลขที่ 5 เด็กชายพงศกร เสาร์ศรี",
+        "เลขที่ 6 เด็กชายศุภณัฐ โคตรสมบัติ",
+        "เลขที่ 7 เด็กชายธยงเดช ปุเรสา",
+        "เลขที่ 8 เด็กชายอดิศร สุขบรรเทิง",
+        "เลขที่ 9 เด็กหญิงธัญญาภรณ์ ทศพร",
+        "เลขที่ 10 เด็กหญิงรติชา มะเดื่อชุมพร",
+        "เลขที่ 11 เด็กหญิงอนัญญา โพนไธสง",
+        "เลขที่ 12 เด็กหญิงคำแก้ว นวงสา",
+        "เลขที่ 13 เด็กหญิงกนกอร เมานางรอง"
       ],
+
       "ป.6": [
-        "เลขที่ 1 ด.ช. นนทกร เก่งกาจ (ตัวอย่าง)",
-        "เลขที่ 2 ด.ช. อภิวิชญ์ สุวรรณ (ตัวอย่าง)",
-        "เลขที่ 3 ด.ญ. จิรภิญญา งามขำ (ตัวอย่าง)",
-        "เลขที่ 4 ด.ญ. พิชญาภา ศรีมงคล (ตัวอย่าง)",
-        "เลขที่ 5 ด.ญ. อรปรียา ใจซื่อ (ตัวอย่าง)"
+        "เลขที่ 1 เด็กชายนันทวัฒน์ เสือโคร่ง",
+        "เลขที่ 2 เด็กชายภูมิพัฒน์ ช่างทองมะดัน",
+        "เลขที่ 3 เด็กชายศัจกร พานทอง",
+        "เลขที่ 4 เด็กชายภูมิ ใบสีทอง",
+        "เลขที่ 5 เด็กชายณัฐกรณ์ เขตจังหรีด",
+        "เลขที่ 6 เด็กชายธนวัฒน์ พัฒนะเผ่าพันธ์",
+        "เลขที่ 7 เด็กชายธีรภัทร ทองโคตร",
+        "เลขที่ 8 เด็กชายธนภัทร ขุนนอก",
+        "เลขที่ 9 เด็กชายอนันต์ วิไสสิด",
+        "เลขที่ 10 เด็กหญิงทิพย์วรรณ์ พิงไธสง",
+        "เลขที่ 11 เด็กหญิงฟ้าใส ไวไธสง",
+        "เลขที่ 12 เด็กหญิงพิชชาภา คำสันเทียะ",
+        "เลขที่ 13 เด็กหญิงปวีณ์ธิดา อุตสาหะกาญจน์",
+        "เลขที่ 14 เด็กหญิงสาวิตรี แอบกระโทก",
+        "เลขที่ 15 เด็กหญิงมิ่งขวัญ ใครกระโทก",
+        "เลขที่ 16 เด็กหญิงชลธิชา ถาวรเมืองแมน",
+        "เลขที่ 17 เด็กหญิงจริมา จงจิตต์",
+        "เลขที่ 18 เด็กหญิงมุกดาวัน สิมพวงสา",
+        "เลขที่ 19 เด็กหญิงองุ่น มาดสวิง"
       ]
     };
 
@@ -1017,10 +1226,6 @@
     const checkinForm = document.getElementById("checkin-form");
     const submitBtn = document.getElementById("submit-btn");
     const submitBtnText = document.getElementById("submit-btn-text");
-
-    const sheetToggleBtn = document.getElementById("sheet-toggle-btn");
-    const sheetPanel = document.getElementById("sheet-panel");
-    const scriptUrlInput = document.getElementById("script-url-input");
 
     const successModal = document.getElementById("success-modal");
     const closeModalBtn = document.getElementById("close-modal-btn");
@@ -1078,102 +1283,17 @@
       document.getElementById(errId).classList.remove("visible");
     }
 
-    // เปิด/ปิด แผงตั้งค่า Google Sheet URL
-    sheetToggleBtn.addEventListener("click", () => {
-      const isOpen = sheetPanel.classList.toggle("open");
-      sheetToggleBtn.setAttribute("aria-expanded", String(isOpen));
-      if (isOpen) {
-        // อัปเดตรายชื่อในกล่องข้อความของระดับชั้นที่เลือกอยู่
-        updateEditorTextarea();
-      }
-    });
 
-    // การเปลี่ยนแท็บ (Tabs) ในแผงตั้งค่า
-    const tabBtns = document.querySelectorAll(".tab-btn");
-    const tabContents = document.querySelectorAll(".tab-content");
 
-    tabBtns.forEach(btn => {
-      btn.addEventListener("click", () => {
-        tabBtns.forEach(b => b.classList.remove("active"));
-        tabContents.forEach(c => c.classList.remove("active"));
 
-        btn.classList.add("active");
-        const targetTab = btn.getAttribute("data-tab");
-        document.getElementById(targetTab).classList.add("active");
-      });
-    });
 
-    // จัดการรายชื่อนักเรียนผ่านเบราว์เซอร์
-    const editGradeSelect = document.getElementById("edit-grade-select");
-    const studentNamesTextarea = document.getElementById("student-names-textarea");
-    const saveStudentsBtn = document.getElementById("save-students-btn");
-    const resetStudentsBtn = document.getElementById("reset-students-btn");
-    const studentSaveStatus = document.getElementById("student-save-status");
 
-    function updateEditorTextarea() {
-      const grade = editGradeSelect.value;
-      if (STUDENTS_BY_GRADE[grade]) {
-        studentNamesTextarea.value = STUDENTS_BY_GRADE[grade].join("\n");
-      } else {
-        studentNamesTextarea.value = "";
-      }
-    }
 
-    editGradeSelect.addEventListener("change", updateEditorTextarea);
 
-    saveStudentsBtn.addEventListener("click", () => {
-      const grade = editGradeSelect.value;
-      const text = studentNamesTextarea.value.trim();
-      // แยกรายชื่อตามบรรทัด และตัดบรรทัดว่างออก
-      const names = text.split("\n").map(n => n.trim()).filter(n => n.length > 0);
 
-      if (names.length === 0) {
-        studentSaveStatus.textContent = "⚠️ กรุณากรอกรายชื่อนักเรียนอย่างน้อย 1 คน";
-        studentSaveStatus.style.color = "#fb7185";
-        studentSaveStatus.style.display = "block";
-        return;
-      }
 
-      STUDENTS_BY_GRADE[grade] = names;
-      try {
-        localStorage.setItem("STUDENTS_BY_GRADE_V2", JSON.stringify(STUDENTS_BY_GRADE));
-      } catch (e) {
-        console.error("Failed to save to localStorage", e);
-      }
 
-      // อัปเดตตัวเลือกในแบบฟอร์มหลักทันที (ถ้าหากระดับชั้นตรงกัน)
-      if (gradeSelect.value === grade) {
-        gradeSelect.dispatchEvent(new Event("change"));
-      }
 
-      // แสดงสถานะบันทึกสำเร็จ
-      studentSaveStatus.textContent = "💾 บันทึกข้อมูลรายชื่อเรียบร้อยแล้ว!";
-      studentSaveStatus.style.color = "#34d399";
-      studentSaveStatus.style.display = "block";
-      setTimeout(() => {
-        studentSaveStatus.style.display = "none";
-      }, 3000);
-    });
-
-    resetStudentsBtn.addEventListener("click", () => {
-      STUDENTS_BY_GRADE = JSON.parse(JSON.stringify(DEFAULT_STUDENTS_BY_GRADE));
-      try {
-        localStorage.removeItem("STUDENTS_BY_GRADE_V2");
-      } catch (e) {
-        console.error(e);
-      }
-      updateEditorTextarea();
-      // อัปเดตแบบฟอร์มหลัก
-      if (gradeSelect.value) {
-        gradeSelect.dispatchEvent(new Event("change"));
-      }
-      studentSaveStatus.textContent = "🔄 รีเซ็ตกลับเป็นรายชื่อตัวอย่างทั้งหมดแล้ว!";
-      studentSaveStatus.style.color = "#f59e0b";
-      studentSaveStatus.style.display = "block";
-      setTimeout(() => {
-        studentSaveStatus.style.display = "none";
-      }, 3000);
-    });
 
     // เอฟเฟ็กต์พลุไฟ (Confetti Burst) เมื่อกดลงทะเบียนสำเร็จ
     const confettiParticles = [];
@@ -1232,21 +1352,17 @@
       submitBtn.disabled = true;
       submitBtnText.textContent = "กำลังบันทึกข้อมูล...";
 
-      const scriptUrl = scriptUrlInput.value.trim();
-      if (scriptUrl) {
-        try {
-          await fetch(scriptUrl, {
-            method: "POST",
-            mode: "no-cors",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload)
-          });
-          sheetStatusText.textContent = "บันทึกข้อมูลไปยัง Google Sheet เรียบร้อยแล้ว";
-        } catch (err) {
-          sheetStatusText.textContent = "ส่งคำขอบันทึกไปยัง Google Sheet แล้ว";
-        }
-      } else {
-        sheetStatusText.textContent = "พร้อมบันทึกไปที่ Google Sheet (ตั้งค่า Web App URL ได้ด้านล่าง)";
+      const scriptUrl = "https://script.google.com/macros/s/AKfycbwLwyFkIXVWkU1mTAVmrFidX9XMFUOmw8v0phW_adxV8cm05AWlR5hLYYprQYA6x97IkQ/exec";
+      try {
+        await fetch(scriptUrl, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        sheetStatusText.textContent = "บันทึกข้อมูลไปยัง Google Sheet เรียบร้อยแล้ว";
+      } catch (err) {
+        sheetStatusText.textContent = "ส่งคำขอบันทึกไปยัง Google Sheet แล้ว";
       }
 
       submitBtn.disabled = false;
@@ -1332,6 +1448,30 @@
 
       requestAnimationFrame(animateCanvas);
     }
+
+    // ฟังก์ชันนาฬิกาและวันที่แบบเรียลไทม์
+    function updateClock() {
+      const clockDateEl = document.getElementById("clock-date");
+      const clockTimeEl = document.getElementById("clock-time");
+      if (!clockDateEl || !clockTimeEl) return;
+
+      const now = new Date();
+
+      // แสดงวันที่แบบเต็ม ภาษาไทย
+      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+      const thDate = now.toLocaleDateString('th-TH', options);
+
+      // แสดงเวลาแบบมีวินาที
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const seconds = String(now.getSeconds()).padStart(2, '0');
+      const thTime = `${hours}:${minutes}:${seconds} น.`;
+
+      clockDateEl.textContent = thDate;
+      clockTimeEl.textContent = thTime;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
 
     window.addEventListener("resize", resizeCanvas);
     initStars();
